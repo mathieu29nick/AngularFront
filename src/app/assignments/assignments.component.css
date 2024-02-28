@@ -1,0 +1,9 @@
+table{
+    padding: 2px;
+    width: 100%;
+}
+.form{
+    display: flex;
+    flex-direction: column;
+    margin: 5px;
+}
