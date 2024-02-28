@@ -8,7 +8,7 @@
         </mat-form-field>
         <mat-form-field>
             <mat-label>Date de rendu</mat-label>
-                <input matInput [matDatepicker]="picker" [(ngModel)]="dateRendu" name="date" placeholder="Nom">
+                <input matInput [matDatepicker]="picker" [(ngModel)]="dateRendu" name="date" placeholder="Date de rendu">
             <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
             <mat-datepicker #picker></mat-datepicker>
         </mat-form-field>
@@ -19,7 +19,7 @@
 </div>
 
 <br>
-<table border="1px">
+<!-- <table border="1px">
     <tbody>
         <tr>
             <th>Libellé</th>
@@ -44,7 +44,33 @@
             }
         }
     </tbody>
-</table>
+</table> -->
+
+<table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+
+    <ng-container matColumnDef="nom">
+      <th mat-header-cell *matHeaderCellDef> Libellé </th>
+      <td mat-cell *matCellDef="let element"> {{element.nom}} </td>
+    </ng-container>
+  
+    <ng-container matColumnDef="dateDeRendu">
+      <th mat-header-cell *matHeaderCellDef>Date de rendu</th>
+      <td mat-cell *matCellDef="let element"> {{element.dateDeRendu | date }} </td>
+    </ng-container>
+  
+    <ng-container matColumnDef="rendu">
+      <th mat-header-cell *matHeaderCellDef>Status</th>
+      <td mat-cell *matCellDef="let element" [ngStyle]="{'color': getColor(element)}"> {{element.rendu}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="voir">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let element"><button mat-raised-button color="primary">Voir detail</button></td>
+      </ng-container>
+  
+    <tr mat-header-row *matHeaderRowDef="titreTable"></tr>
+    <tr mat-row *matRowDef="let row; columns: titreTable;"></tr>
+  </table>
 
 <br>
 

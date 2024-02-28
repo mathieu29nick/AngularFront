@@ -1,9 +1,10 @@
-table{
-    padding: 2px;
-    width: 100%;
+.mat-elevation-z8{
+    text-align: center;
 }
+
 .form{
     display: flex;
     flex-direction: column;
     margin: 5px;
 }
+

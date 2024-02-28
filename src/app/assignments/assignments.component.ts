@@ -10,19 +10,21 @@ import { Assignment } from './assignment.model';
 import {provideNativeDateAdapter} from '@angular/material/core';
 import { AssignmentDetailComponent } from './assignment-detail/assignment-detail.component';
 import { DetailDirective } from '../shared/detail.directive';
+import {MatTableModule} from '@angular/material/table';
 
 @Component({
   selector: 'app-assignments',
   standalone: true,
   providers: [provideNativeDateAdapter()],
   imports: [CommonModule,RenduDirective,FormsModule,MatButtonModule,MatInputModule,MatDatepickerModule,MatFormFieldModule,AssignmentDetailComponent,
-  DetailDirective],
+  DetailDirective,MatTableModule],
   templateUrl: './assignments.component.html',
   styleUrl: './assignments.component.css'
 })
 export class AssignmentsComponent {
   titre = "A RENDRE";
   buttonDisabled = true;
+  titreTable: string[] = ['nom', 'dateDeRendu', 'rendu','voir'];
 
   //Champs des formulaires
   nomAssignment='';
@@ -46,6 +48,8 @@ export class AssignmentsComponent {
     }
   ];
   
+  dataSource = this.assignments;
+
   //CSS conditionnel
   getColor(status:any){
     return status.rendu ? 'green' : 'red';
@@ -57,8 +61,12 @@ export class AssignmentsComponent {
     newAss.nom=this.nomAssignment;
     newAss.dateDeRendu=this.dateRendu;
     newAss.rendu=false;
-    
+
     //Ajout dans la liste
     this.assignments.push(newAss);
+    this.dataSource = [...this.assignments];
+
+    this.nomAssignment='';
+    this.dateRendu=undefined;
   }
 }
