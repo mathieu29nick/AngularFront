@@ -1,24 +1,47 @@
-<p>Liste des devoirs : {{titre}}</p>
-<br>
+<main *ngIf="!isFormAjout">
+    <p>Liste des devoirs : {{titre}}</p>
+    <br>
 
-<div>
-    <form (submit)="onSubmit($event)" ngForm #assignmentForm class="form">
-        <mat-form-field>
-            <input matInput [(ngModel)]="nomAssignment" name="nom" placeholder="Nom" required>
-        </mat-form-field>
-        <mat-form-field>
-            <mat-label>Date de rendu</mat-label>
-                <input matInput [matDatepicker]="picker" [(ngModel)]="dateRendu" name="date" placeholder="Date de rendu">
-            <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
-            <mat-datepicker #picker></mat-datepicker>
-        </mat-form-field>
-        <button mat-stroked-button color="primary" [disabled]="nomAssignment=='' || dateRendu===undefined">
-            Ajouter un devoir
-        </button>
-    </form>
-</div>
+    <button mat-stroked-button color="primary" (click)="activerFormAjout()">
+        Ajouter Assignment
+    </button>
+    <br>
 
-<br>
+    <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+
+        <ng-container matColumnDef="nom">
+        <th mat-header-cell *matHeaderCellDef> Libellé </th>
+        <td mat-cell *matCellDef="let element"> {{element.nom}} </td>
+        </ng-container>
+    
+        <ng-container matColumnDef="dateDeRendu">
+        <th mat-header-cell *matHeaderCellDef>Date de rendu</th>
+        <td mat-cell *matCellDef="let element"> {{element.dateDeRendu | date }} </td>
+        </ng-container>
+    
+        <ng-container matColumnDef="rendu">
+        <th mat-header-cell *matHeaderCellDef>Status</th>
+        <td mat-cell *matCellDef="let element" [ngStyle]="{'color': getColor(element)}"> {{element.rendu}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="voir">
+            <th mat-header-cell *matHeaderCellDef></th>
+            <td mat-cell *matCellDef="let element"><button mat-raised-button color="primary" (click)="assignmentClic(element)">Voir detail</button></td>
+        </ng-container>
+    
+        <tr mat-header-row *matHeaderRowDef="titreTable"></tr>
+        <tr mat-row *matRowDef="let row; columns: titreTable;"></tr>
+    </table>
+
+    <br>
+
+    <h2>Detail</h2>
+    <app-assignment-detail [assignmentTransmis]="assignementClicker"></app-assignment-detail>
+</main>
+<app-add-assignment *ngIf="isFormAjout" (newAssignment)="ajoutAssignment($event)"></app-add-assignment>
+
+
+
 <!-- <table border="1px">
     <tbody>
         <tr>
@@ -45,35 +68,3 @@
         }
     </tbody>
 </table> -->
-
-<table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
-
-    <ng-container matColumnDef="nom">
-      <th mat-header-cell *matHeaderCellDef> Libellé </th>
-      <td mat-cell *matCellDef="let element"> {{element.nom}} </td>
-    </ng-container>
-  
-    <ng-container matColumnDef="dateDeRendu">
-      <th mat-header-cell *matHeaderCellDef>Date de rendu</th>
-      <td mat-cell *matCellDef="let element"> {{element.dateDeRendu | date }} </td>
-    </ng-container>
-  
-    <ng-container matColumnDef="rendu">
-      <th mat-header-cell *matHeaderCellDef>Status</th>
-      <td mat-cell *matCellDef="let element" [ngStyle]="{'color': getColor(element)}"> {{element.rendu}} </td>
-    </ng-container>
-
-    <ng-container matColumnDef="voir">
-        <th mat-header-cell *matHeaderCellDef></th>
-        <td mat-cell *matCellDef="let element"><button mat-raised-button color="primary">Voir detail</button></td>
-      </ng-container>
-  
-    <tr mat-header-row *matHeaderRowDef="titreTable"></tr>
-    <tr mat-row *matRowDef="let row; columns: titreTable;"></tr>
-  </table>
-
-<br>
-
-<p>Detail</p>
-<app-assignment-detail></app-assignment-detail>
-

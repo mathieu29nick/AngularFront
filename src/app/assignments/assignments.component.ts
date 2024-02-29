@@ -1,52 +1,31 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RenduDirective } from '../shared/rendu.directive';
-import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import {MatInputModule} from '@angular/material/input';
-import {MatDatepickerModule} from '@angular/material/datepicker';
-import { MatFormFieldModule } from '@angular/material/form-field';
+import { RenduDirective } from '../shared/rendu.directive';
 import { Assignment } from './assignment.model';
-import {provideNativeDateAdapter} from '@angular/material/core';
 import { AssignmentDetailComponent } from './assignment-detail/assignment-detail.component';
 import { DetailDirective } from '../shared/detail.directive';
 import {MatTableModule} from '@angular/material/table';
+import { AddAssignmentComponent } from './add-assignment/add-assignment.component';
+import { AssignmentsService } from '../shared/assignments.service';
 
 @Component({
   selector: 'app-assignments',
   standalone: true,
-  providers: [provideNativeDateAdapter()],
-  imports: [CommonModule,RenduDirective,FormsModule,MatButtonModule,MatInputModule,MatDatepickerModule,MatFormFieldModule,AssignmentDetailComponent,
-  DetailDirective,MatTableModule],
+  imports: [CommonModule,RenduDirective,AssignmentDetailComponent,
+  DetailDirective,MatTableModule,MatButtonModule,AddAssignmentComponent],
   templateUrl: './assignments.component.html',
   styleUrl: './assignments.component.css'
 })
-export class AssignmentsComponent {
+export class AssignmentsComponent implements OnInit{
+  // Variables
   titre = "A RENDRE";
   buttonDisabled = true;
   titreTable: string[] = ['nom', 'dateDeRendu', 'rendu','voir'];
-
-  //Champs des formulaires
-  nomAssignment='';
-  dateRendu=undefined;
-
-  assignments : Assignment[]=[
-    {
-      nom:"Devoir Test 1",
-      dateDeRendu: new Date("2024-02-15"),
-      rendu:false
-    },
-    {
-      nom:"Devoir Test 2",
-      dateDeRendu: new Date("2024-02-25"),
-      rendu:true
-    },
-    {
-      nom:"Devoir Test 3",
-      dateDeRendu: new Date("2024-01-26"),
-      rendu:false
-    }
-  ];
+  assignementClicker!: Assignment;
+  isFormAjout=false;
+  
+  assignments : Assignment[]= [];
   
   dataSource = this.assignments;
 
@@ -55,18 +34,37 @@ export class AssignmentsComponent {
     return status.rendu ? 'green' : 'red';
   }
 
-  onSubmit(event:any){
-    if((this.nomAssignment=='') || (this.dateRendu==undefined)) return;
-    let newAss =new Assignment();
-    newAss.nom=this.nomAssignment;
-    newAss.dateDeRendu=this.dateRendu;
-    newAss.rendu=false;
-
-    //Ajout dans la liste
-    this.assignments.push(newAss);
-    this.dataSource = [...this.assignments];
-
-    this.nomAssignment='';
-    this.dateRendu=undefined;
+  // Detail : action voir Détail
+  assignmentClic(a:Assignment){
+    this.assignementClicker=a;
   }
+
+  activerFormAjout(){
+    this.isFormAjout=true;
+  }
+
+  ajoutAssignment(a:Assignment){
+    this.assignementsService.addAssignment(a)
+    .subscribe((response) =>{
+      this.dataSource=[...this.assignments];
+      this.isFormAjout=false;
+    }); 
+  }
+
+  /* SERVICE */
+  // Injection du AssignmentsService
+  constructor(private assignementsService : AssignmentsService){}
+
+  ngOnInit(){
+    this.getAssignmentsFromService();
+  }
+  
+  getAssignmentsFromService(){
+    this.assignementsService.getAssignments()
+    .subscribe((assignments) =>{
+      this.assignments=assignments;
+      this.dataSource=[...this.assignments];
+    });
+  }
+  
 }
